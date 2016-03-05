@@ -2,76 +2,68 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.util.Vector;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+
 public class Tax {
 	public static boolean endFlag;
-	
-	public enum Products {
-		Exempted,
-		Taxable
 
-	}
-	
-	public enum Origin {
-		Local,
-		Imported
-	}
-	
-	public static void main (String[] args) {
+	public static ArrayList<saleItem> list = new ArrayList<saleItem>();
+	static String[] type = { "Book", "Food", "Medical Product" };
+
+	public static void main(String[] args) {
 		endFlag = true;
-		int quantity = 0;
-		String name = null;
-		BigDecimal price = new BigDecimal(20.0);
-		boolean imported = false;
-		boolean taxable = false;
-		
-		BigDecimal sellingTax = new BigDecimal(0.1);
-		BigDecimal importTax = new BigDecimal(0.05);
-		
-		System.out.println("Enter Your Items:(Type N to Continue...)");
-		
-		BufferedReader buffer=new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader buffer = new BufferedReader(new InputStreamReader(
+				System.in));
 		try {
-			while(endFlag){
-				String item= buffer.readLine();	
-			
-				
-				
-				
-				
-				
-				
-				
-				if(item.equals("N")){
+			while (endFlag) {
+				System.out.println("Enter Your Items:(Type N to Continue...)");
+				String item = buffer.readLine();
+				saleItem sale = new saleItem(Double.parseDouble(item
+						.split(" at")[1]),
+						Integer.parseInt(item.split(" ")[0]),
+						item.split(" at")[0].replace("1 ", ""));
+				for (String s : type) {
+					System.out.println("Is this Item a " + s + "(Y/N)");
+					String response = buffer.readLine();
+					if (response.equals("Y")) {
+						sale.type = s;
+						break;
+					}
+
+				}
+				list.add(sale);
+				System.out.println("Are There More Items[Y/N]");
+				item = buffer.readLine();
+				if (item.equals("N")) {
 					endFlag = false;
 				}
 			}
-			System.out.println("Complete");
+			double salesTaxes = 0F;
+			double total = 0F;
+			for (saleItem l : list) {
+				l.TaxItem();
+				System.out.println(l.quantity + " " + l.item_name + " "
+						+ round(l.total,2));
+				salesTaxes += round(l.taxValue,2);
+				total += round(l.total,2);
+			}
+			System.out.println("Sales Taxes:" + salesTaxes);
+			System.out.println("Total: :" + total);
 
-			
-			
-			
-			
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//Tax Taxes = new Tax();
-		
+		// Tax Taxes = new Tax();
+
 	}
-	class saleItem{
-		public double price;
-		public int quantity;
-		public String item_name;
-		
-		public saleItem(double price, int quantity, String name){
-			
-		}
-		
+	public static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    BigDecimal bd = new BigDecimal(value);
+	    bd = bd.setScale(places, RoundingMode.HALF_UP);
+	    return bd.doubleValue();
 	}
-	
 
 }
-
-	
